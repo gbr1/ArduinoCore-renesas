@@ -105,7 +105,7 @@ bool R7FA6M5_CAN::begin(CanBitRate const can_bitrate)
 
   /* Configure the pins for CAN.
    */
-  int const max_index = g_pin_cfg_size / sizeof(g_pin_cfg[0]);
+  int const max_index = PINS_COUNT;
   auto [cfg_init_ok, cfg_channel] = cfg_pins(max_index, _can_tx_pin, _can_rx_pin);
   init_ok &= cfg_init_ok;
   _canfd_cfg.channel = cfg_channel;
@@ -113,7 +113,7 @@ bool R7FA6M5_CAN::begin(CanBitRate const can_bitrate)
   /* Set the pointer to the right filtering structure. */
   if (_canfd_cfg.channel == 0)
     _canfd_extended_cfg.p_afl = CANFD0_AFL;
-  if (_canfd_cfg.channel == 1)
+  else if (_canfd_cfg.channel == 1)
     _canfd_extended_cfg.p_afl = CANFD1_AFL;
   else
     init_ok &= false;
@@ -190,9 +190,11 @@ int R7FA6M5_CAN::disableInternalLoopback()
 
 int R7FA6M5_CAN::write(CanMsg const & msg)
 {
+  bool const is_standard_id = msg.isStandardId();
+
   can_frame_t can_msg = {
-    /* id               = */ msg.id,
-    /* id_mode          = */ CAN_ID_MODE_EXTENDED,
+    /* id               = */ is_standard_id ? msg.getStandardId()  : msg.getExtendedId(),
+    /* id_mode          = */ is_standard_id ? CAN_ID_MODE_STANDARD : CAN_ID_MODE_EXTENDED,
     /* type             = */ CAN_FRAME_TYPE_DATA,
     /* data_length_code = */ min(msg.data_length, CAN_DATA_BUFFER_LENGTH),
     /* options          = */ 0 /* This ensures that CAN Classic is used. */
@@ -221,7 +223,7 @@ size_t R7FA6M5_CAN::available()
     /* Extract the received CAN message. */
     CanMsg const msg
     (
-      frame.id,
+      (frame.id_mode == CAN_ID_MODE_STANDARD) ? CanStandardId(frame.id) : CanExtendedId(frame.id),
       frame.data_length_code,
       frame.data
     );
@@ -247,7 +249,7 @@ void R7FA6M5_CAN::onCanFDCallback(can_callback_args_t * p_args)
       /* Extract the received CAN message. */
       CanMsg const msg
       (
-        p_args->frame.id,
+        (p_args->frame.id_mode == CAN_ID_MODE_STANDARD) ? CanStandardId(p_args->frame.id) : CanExtendedId(p_args->frame.id),
         p_args->frame.data_length_code,
         p_args->frame.data
       );

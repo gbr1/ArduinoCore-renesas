@@ -67,6 +67,18 @@ static const ioport_cfg_t bsp_pin_cfg = {
   .number_of_pins = sizeof(bsp_pin_cfg_data) / sizeof(ioport_pin_cfg_t),
   .p_pin_cfg_data = &bsp_pin_cfg_data[0],
 };
+
+extern "C" {
+    unsigned int PINCOUNT_fn() {
+        return (sizeof(g_pin_cfg) / sizeof(g_pin_cfg[0]));
+    }
+}
+
+void usb_post_initialization() {
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->USBMC_b.VDCEN = 1;
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->SYSCFG_b.DPRPU = 1;
+}
+
 static ioport_instance_ctrl_t ioport_ctrl;
 
 void initVariant() {

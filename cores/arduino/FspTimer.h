@@ -76,10 +76,11 @@ class AGTimer {
 	    ext_cfg.trigger_edge                  = AGT_TRIGGER_EDGE_RISING;
 
       cfg.p_extend                         = &ext_cfg;
+
+      memset(&ctrl, 0, sizeof(agt_instance_ctrl_t));
   }
   agt_extended_cfg_t ext_cfg;
   agt_instance_ctrl_t ctrl;
-
 };
 
 
@@ -94,7 +95,7 @@ class FspTimer {
     uint32_t _duty_cycle_counts;
     timer_source_div_t _sd;
     uint8_t type;
-    void set_period_counts(float period, uint32_t max);
+    void set_period_counts(uint8_t tp, float period, uint32_t max);
     TimerIrqCfg_t get_cfg_for_irq();
     static bool force_pwm_reserved;
     static TimerAvail_t gpt_used_channel[GPT_HOWMANY];

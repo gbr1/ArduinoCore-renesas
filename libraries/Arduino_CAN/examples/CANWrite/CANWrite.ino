@@ -1,3 +1,12 @@
+/*
+  CANWrite
+
+  Write and send CAN Bus messages
+
+  See the full documentation here:
+  https://docs.arduino.cc/tutorials/uno-r4-wifi/can
+*/
+
 /**************************************************************************************
  * INCLUDE
  **************************************************************************************/
@@ -35,7 +44,7 @@ void loop()
    */
   uint8_t const msg_data[] = {0xCA,0xFE,0,0,0,0,0,0};
   memcpy((void *)(msg_data + 4), &msg_cnt, sizeof(msg_cnt));
-  CanMsg msg(CAN_ID, sizeof(msg_data), msg_data);
+  CanMsg const msg(CanStandardId(CAN_ID), sizeof(msg_data), msg_data);
 
   /* Transmit the CAN message, capture and display an
    * error core in case of failure.

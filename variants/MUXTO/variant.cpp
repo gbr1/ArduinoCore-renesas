@@ -62,7 +62,11 @@ extern "C" const PinMuxCfg_t g_pin_cfg[] = {
   { BSP_IO_PORT_02_PIN_06,    P206   }, /* (27) D27  */
 };
 
-extern "C" const size_t g_pin_cfg_size = sizeof(g_pin_cfg);
+extern "C" {
+    unsigned int PINCOUNT_fn() {
+        return (sizeof(g_pin_cfg) / sizeof(g_pin_cfg[0]));
+    }
+}
 
 const ioport_pin_cfg_t bsp_pin_cfg_data[] = {
   { ((uint32_t) IOPORT_CFG_PERIPHERAL_PIN | (uint32_t) IOPORT_PERIPHERAL_USB_FS), BSP_IO_PORT_09_PIN_15 },
@@ -75,6 +79,11 @@ static const ioport_cfg_t bsp_pin_cfg = {
   .p_pin_cfg_data = &bsp_pin_cfg_data[0],
 };
 static ioport_instance_ctrl_t ioport_ctrl;
+
+void usb_post_initialization() {
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->USBMC_b.VDCEN = 1;
+  ((R_USB_FS0_Type*)R_USB_FS0_BASE)->SYSCFG_b.DPRPU = 1;
+}
 
 void initVariant() {
     //R_IOPORT_Open(&ioport_ctrl, &bsp_pin_cfg);

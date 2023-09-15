@@ -1,17 +1,12 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" unsigned int PINCOUNT_fn();
-extern "C" unsigned int I2C_COUNT_fn();
-extern "C" unsigned int SPI_COUNT_fn();
-extern "C" unsigned int UART_COUNT_fn();
-extern "C" unsigned int SCI_COUNT_fn();
-#endif
-
 #define PIN(X,Y) (X * 16 + Y)
 
 // Pin count
 // ----
+#ifdef __cplusplus
+extern "C" unsigned int PINCOUNT_fn();
+#endif
 #define PINS_COUNT           (PINCOUNT_fn())
 #define NUM_DIGITAL_PINS     (121u)
 #define NUM_ANALOG_INPUTS    (8u)
@@ -46,14 +41,31 @@ static const uint8_t A7 = PIN_A7;
 
 // Digital pins
 // -----------
-#define D0  (0u)
-#define D1  (1u)
-#define D2  (2u)
-#define D3  (3u)
-#define D4  (4u)
-#define D5  (5u)
-#define D6  (6u)
-#define D7  (7u)
+#define PIN_D0   (0u)
+#define PIN_D1   (1u)
+#define PIN_D2   (2u)
+#define PIN_D3   (3u)
+#define PIN_D4   (4u)
+#define PIN_D5   (5u)
+#define PIN_D6   (6u)
+#define PIN_D7   (7u)
+
+#undef D0
+#undef D1
+#undef D2
+#undef D3
+#undef D4
+#undef D5
+#undef D6
+#undef D7
+static const uint8_t D0 = PIN_D0;
+static const uint8_t D1 = PIN_D1;
+static const uint8_t D2 = PIN_D2;
+static const uint8_t D3 = PIN_D3;
+static const uint8_t D4 = PIN_D4;
+static const uint8_t D5 = PIN_D5;
+static const uint8_t D6 = PIN_D6;
+static const uint8_t D7 = PIN_D7;
 
 // LEDs
 // ----
